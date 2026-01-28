@@ -1,0 +1,827 @@
+html {
+    scroll-behavior: smooth; /* Hace que el movimiento sea un deslizamiento u no un salto brusco */
+    scroll-padding-top: 38px; /* Esto evita que el menú tape el título al bajar */
+}
+
+/* 1. Definición de variables */
+:root {
+    --bg-color: #1a1a1c;
+    --card-bg: #242426;
+    --text-main: #d1d1d1;
+    --text-dim: #888888;
+    --accent: #bb86fc;
+    --white: #ffffff;
+}
+
+/* 2. Congfiguraación de base */
+/* Esto hace que al hacer clic en el menú, la página se deslice suavemente */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Configuración general de la página */
+body {
+    background: linear-gradient(rgba(0,0,0,0.8),rgba(0,0,0,0.8)),
+                url('../img/perfil-profesional.jpg'); /* Ruta corregida */
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed; /* Esto hace que el fondo no se mueva al hacer scroll */
+    color: var(--text-main); 
+    font-family: 'Inter', sans-serif; /* Aquí usamos la fuente de Google */
+    margin: 0; /* Elimina espacios sobrantes en los bordes */
+}
+
+/* Limpieza de bordes automáticos */
+section,
+main,
+.about-container,
+#hero,
+#about,
+#music-library {
+    border-bottom: none !important;
+    border-top: none !important;
+    box-shadow: none !important; /* A veces la línea es una sombra proyectada */
+}
+
+/* == REGLA MAESTRA PARA TÍTULOS DE SECCIÓN (Esto unifica Video, Galería, Lanzamientos y Contacto) == */
+#music-section h2,
+#gallery h2,
+#video-section h2,
+#about h2, 
+#contact h2 {
+    text-align: center;
+    font-size: 1.8rem;
+    font-weight: 300;
+    text-transform: uppercase;
+    letter-spacing: 6px;
+    margin-top: 60px; /* Un poco más de aire arriba */
+    margin-bottom: 20px;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+/* Estilo para las líneas divisorias */
+.divider {
+    display: block !important;
+    width: 100% !important; /* Más corta y minimalista */
+    max-width: 900px; /* Limite para que no se vea gigante en monitores grandes */
+    height: 1px !important; /* Grosor mínimo */
+    background:linear-gradient(to right, transparent 0%, rgba(255,255,255,0.4) 50%, transparent 100%) !important; /* Graduamos la opacidad: desaparece en las puntas */
+    margin: 60px auto !important;
+    border: none !important; /* Quitamos la línea fea por defecto */
+}
+
+/* 3. ANIMACIONES (La clase reveal que controla el JS) */
+.reveal {
+    opacity: 1; /* Forzamos a que se vea */
+    transform: none !important;
+}
+
+/* == ENCABEZADO Y MENÚ == */
+/* Estilo para el encabezado (Nombre y Menú) */
+nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%; /* Ocupa todo el ancho */
+    padding: 20px 40px; /* Espacio interno */
+
+    /* ESTO ES LO MÁS IMPORTANTE */
+    display: flex;
+    justify-content: flex-end; /* Alinea los links a la derecha */
+    background: rgba(26, 26, 28, 0.95); /* Fondo negro casi total para que contrasten */
+    z-index: 1000; /* Esto lo pone por encima de TODO */
+    box-sizing: border-box; /* Fundamental para que el padding no "empuje" el menú fuera de la pantalla */
+}
+
+/* 2. La lista de enlaces */
+.nav-links {
+    display: flex;
+    list-style: none; /* Quita los puntos de la lista */
+    margin: 0; /* Asegúrate de que no tenga márgenes automáticos */
+    padding: 0;
+    gap: 25px; /* Espacio entre links */
+}
+
+/* 3. Los enlaces individuales */
+.nav-links a {
+    text-decoration: none;
+    color: var(--white); /* Color Blanco */
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    transition: 0.3s ease;
+    opacity: 0.7; /* Un poco tenue para que se vea elegante */
+    position: relative; /* Necesario para el efecto de la línea inferior */
+}
+
+/* Efecto cuando pasas el mouse por encima de un link */
+.nav a:hover {
+    opacity: 1;
+    color: var(--white);
+}
+
+/* Efecto opcional: línea que aparece al pasar el mouse */
+.nav-links a::after {
+    content: '';
+    display: block;
+    width: 0;
+    height: 1px;
+    background: var(--white);
+    transition: width 0.3s;
+    position: absolute;
+    bottom: -5px;
+}
+
+.nav-links a:hover::after {
+    width: 100%;
+}
+
+/* AJUSTES PARA EL SUBMENÚ (DROPDOWN) */
+.dropdown {
+    position: relative; /* Base para que el submenú sepa dónde aparecer */
+    display: inline-block;
+}
+
+/* Estilo del contenedor del submenú */
+.dropdown-content {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0; /* Alineado a la derecha */
+    min-width: 200px;
+    background: rgba(20,20,22,0.98); /* Fondo igual a tu nav */
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    padding: 5px 0;
+    z-index: 1000;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    overflow: hidden; /* Esto evita que las,líneas sobresalgan */
+}
+
+/* 3. Mostrar al pasar el mouse por el LI o por el puente */
+.dropdown:hover .dropdown-content {
+    display: block; /* Hace que aparezca */
+    animation: navFade 0.3s ease; /* Animación suave */
+}
+
+/* Enlace dentro del submenú */
+.dropdown-content li {
+    width: 100%;
+    list-style: none;
+}
+
+.dropdown-content li a {
+    display: block;
+    padding: 12px 20px;
+    color: rgba(255,255,255,0.7) !important;
+    font-size: 0.7rem !important;
+    text-decoration: none;
+    text-align: right;
+    transition: 0.3s;
+}
+
+/* Hover en las opciones */
+.dropdown-content li a:hover {
+    color: var(--white) !important;
+    background: rgba(255,255,255,0.05);
+    padding-right: 25px; /* Pequeño efecto de movimiento */
+}
+
+/* EL TRUCO PARA QUE NO DESAPAREZCA: El puente ivisible */
+.dropdown::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    height: 10px; /* Un puente invisible entre Música y el menú */
+}
+
+@keyframes navFade {
+    from { opacity: 0; transform: translateY(5px);}
+    to { opacity: 1; transform: translateY(0);}
+}
+
+/* == SECCIÓN PRINCIPAL (Hero) == */
+#hero { 
+    height: 100vh; /* Que ocupe toda la pantalla al entrar */
+    background: transparent; /* Quitamos el fondo de aquí porque está en el body */
+    display: flex;
+    flex-direction: column; /* Para poner el texto debajo del nombre */
+    justify-content: center;
+    align-items: center;
+ }
+
+#hero h1 {
+    font-size: clamp(1.5 rem, 8vw, 3.5rem); /* Nombre se ajusta solo según el tamaño de pantalla */
+    font-weight: 300; /* Letra delgada */
+    letter-spacing: 12px; /* Mucho espacio entre letras (look minimal) */
+    text-transform: uppercase; /* Todo en mayúsculas */
+    margin-bottom: 10px;
+    color: var(--white);
+ }
+
+#hero p {
+    font-size: 0.9rem;
+    letter-spacing: 4px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+ }
+
+/* == SECCIÓN ABOUT (Biografía) == */
+/* Aseguramos que la sección no herede el centrado general */
+.about {
+    padding: 100px 10%; /* Aumentamos el padding lateral para que no toque bordes */
+    max-width: 1300px; /* Un poco más estrecho para que sea más elegante */
+    margin: 0 auto;
+    box-sizing: border-box; /* Asegura que el padding no rompa el ancho total */
+}
+
+.about-container {
+    display: flex;
+    align-items: flex-start; /* Centra verticalmente el texto con la foto */
+    gap: 80px; /* Espacio entre la foto y el texto */
+    flex-wrap: wrap; /* Para que en móviles se acomode uno abajo del otro */
+    justify-content: center;
+}
+
+/* Columna de la imagen */
+.about-image {
+    flex: 1; /* Ocupa el 50% del espacio disponible */
+    min-width: 300px; /* Evita que la foto se haga diminuta */
+    max-width: 600px;
+    padding-left: 50px;
+}
+
+.about-image img {
+    width: 100%; /* Se adapta al espacio */
+    border-radius: 20px; /* Bordes redondeados profesionales */
+    filter: grayscale(20%); /* Un toque artístico de desaturación */
+    box-shadow: 0 20px 40px rgba(0,0,0,0.5); /* Sombra para dar profunidad */
+ }
+
+/* Columna del Texto */
+.about-text {
+    flex: 1.8; /* Le da un poco más de espacio al texto que a la foto */
+    min-width: 350px;
+    padding-right: 50px;
+}
+
+/* Forzar que el título 'Sebastian Vargas' o 'Biografía' se quede en su sitio */
+.about-text h2 {
+    font-size: 1.8rem; /* Mismo tamaño que Lanzamientos */
+    font-weight: 300; /* Misma delgadez */
+    text-transform: uppercase;
+    letter-spacing: 8px; /* Mismo espaciado elegante */
+    margin-bottom: 20px; /* Espacio entre título y el primer parráfo */
+    color: var(--white);
+    text-align: left; /* LO mantenemos a la izquierda para el diseño de About */
+}
+
+/* Línea decorativa debajo de "Biografía" */
+.about-text h2::after {
+    content: '';
+    display: block;
+    width: 30px; /* Más corta */
+    height: 1px; /* Más delgada */
+    background-color: var(--white);
+    margin-top: 15px;
+}
+
+/* 1. Párrafos de la biografía */
+.about-text p {
+    font-size: 1rem;
+    line-height: 1.8; /* Espacio entre líneas para que no canse la vista */
+    color: var(--text-main);
+    margin-bottom: 1.5rem;
+    text-align: justify; /* Alineqación justificada para que se vea ordenado */
+    text-justify: inter-word; /* Espaciado entre palabras, no letras */
+    hyphens: none; /* Ayuda a que el justificado no deje huecos grandes */
+    -webkit-hyphens: none; /* Asegura que en todos los iPhones y Macs se vea igua */
+    word-break: normal; /* Refuerza que no haya cortes */
+}
+
+.about-text strong {
+    color: var(--white);
+    font-weight: 500;
+}
+
+/* RESPONSIVO: Ajuste para tabletas y celulares */
+@media (max-width: 768px) {
+    .about-container {
+        flex-direction: column;
+        text-align: center;
+        gap: 30px;
+    }
+
+    .about-text {
+        text-align: center;
+    }
+
+    .about-image {
+        justify-content: center;
+    }
+}
+
+/* == SECCIÓN DE GALERÍA DE FOTOS == */
+.gallery-container { /* Se mostrarán las fotos cargadas */
+    display: grid; /* Crea 2 columnas iguales en pantallas grandes */
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 20px;
+    width: 95%; /* Ancho máximo para que no se estiren al infinito */
+    max-width: 1400px;
+    margin: 0 auto; /* Centra la galería */
+    padding-bottom: 80px;
+}
+
+.photo-card img {
+    width: 100%; /* Ocupan el ancho de su columna */
+    height: 500px; /* Un poco más altas para lucir el estudio y el live */
+    object-fit: cover; /* Recorta la foto para que encaje perfecto sin deformarse */
+    border-radius: 12px;
+    filter: grayscale(100%) brightness(0.7); /* Look artístico en blanco y negro */
+    transition: all 0.6s cubic-bezier(0.165,0.84,0.44,1);
+    cursor: pointer; /* Un toque visual diferente para el cursor */
+}
+
+.photo-card img:hover {
+    filter: grayscale(0%) contrast(1); /* Recupera color al pasar el mouse */
+    transform: scale(1.02);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.6); /* Sombra al resaltar */
+}
+
+/* Ajuste para celulares (1 sola columna) */
+@media (max-width: 768px) {
+    .gallery-container {
+        grid-template-columns: 1fr;
+        width: 90%;
+    }
+    .gallery-container img {
+        height: 350px; /* Un poco más bajas en móvil para que no ocupen toda la pantalla */
+    }
+}
+
+/* 2. Ajuste para pantallas grandes (Tu Mac y monitores) */
+@media (min-width: 1024px) {
+    .gallery-container{ /* Aquí forzamos a que en pantallas grandes se vean 2 0 3 columnas grandes */
+        grid-template-columns: repeat(2,1fr);
+    }
+}
+
+/* == SECCIÓN GALERÍA == */
+/* Centrado de la Sección de Galería */
+#gallery {
+    padding: 80px 0;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.gallery-container {
+    display: grid; /* Usar Grid es más preciso que Flex para galerías */
+    grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+    gap: 20px;
+    width: 95%;
+    max-width: 1400px;
+    margin: 0 auto; /* Centra todo el bloque de la galería */
+}
+
+.gallery-container img {
+    width: 100%;
+    height: 500px; /* Un poco más altas para que luzcan más */
+    object-fit: cover; /* Recorta la imagen para llenar el espacio sin deformarse */
+    border-radius: 12px;
+    transition: all 0.6s cubic-bezier(0.165,0.84,0.44,1);
+    filter: brightness(0.7) contrast(1.1); /* Efecto cinematográfico inicial */
+}
+
+/* Efecto al pasar el mouse (Hover) */
+.gallery-container img:hover{
+    filter: brightness(1) contrast(1);
+    transform: scale(1.02);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+    z-index: 2; /* asegura que la foto que crece se vea sobre las otras */
+}
+
+/* == SECCIÓN DE MÚSICA == */
+/* Estilos para la sección de Lanzamientos (Organizada) */
+#music-section {
+    padding: 100px 20px; /* Espacio arriba y abajo */
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centra todo el contenido de la sección */
+}
+
+.music-category-title {
+    width: 100%;
+    max-width: 1200px;
+    margin: 60px auto 15px auto;
+    font-size: 0.9rem; /* Más pequeño */
+    text-transform: none; /* En minúsculas se ve más orgánico */
+    letter-spacing: 2px;
+    color: var(--white); /* Usamos el gris suave de tus variables */
+    opacity: 0.6; /* Lo hacemos un poco más tenue */
+    display: block;
+}
+
+/* EXCEPCIÓN: Solo para los que deben ir a la izquierda (Albums y Singles) */
+.left-title { 
+    text-align: left;
+    color: var(--white); /* Blanco puro */
+    opacity: 0.9; /* Subimos la opacidad para que brille más */
+    font-size: 1rem; /* Un toque más grande para que se note */
+    font-weight: 400; /* Le damos un poco más de cuerpo que el resto */
+    padding-left: 15px; /* Esto les da un pequeño margen para no toquen el borde */
+    margin-bottom: 20px; /* Espacio con las portadas */
+    letter-spacing: 4px; /* Un toque más de aire entre letras para verse más  PRO */
+    text-shadow: 0 0 10px rgba(255,255,255,0.1);
+}
+
+.spotify-embed-container {
+    width: 100%;
+    max-width: 700px; /* Ancho ideal para reproductores de Spotify */
+    background: rgba(255,255,255,0.01);
+    padding: 10px;
+    border-radius: 15px;
+    border: 1px solid rgba(255,255,255,0.05);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    transition: transform 0.4s ease;
+}
+
+.spotify-embed-container:hover {
+    transform: translateY(-5px); /* Efecto sutil al pasar el mpuse */
+    border-color: rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.03);
+}
+
+.launch-description {
+    max-width: 600px; /* Limitamos el ancho del texto descriptivo */
+    margin: 30px auto 0 auto;
+    font-size: 1rem;
+    color: var(--white);
+    line-height: 1.6;
+    text-align: center;
+    font-style: italic;
+    letter-spacing: 0.5px;
+    opacity: 0.85;
+    font-weight: 300;
+}
+
+/* == ESTILOS GLOBALES DE MÚSICA (Álbumes y Singles) == */
+/* Cuadrícula para Álbumes / EP (esta es la clave para la alineación horizontal) */
+.track-grid {
+    display: flex !important; /* Forzamos línea horizontal */
+    flex-wrap: nowrap !important; /* Evitamos que los álbumes bajen a la siguiente fila */
+    overflow-x: auto !important; /* permite el movimiento lateral */
+    scroll-behavior: smooth; /* Permite el movimiento lateral */
+    scroll-snap-type: x proximity; /* Las portadas se "imantan" al centro al moverlas */
+    gap: 25px;
+    padding: 20px 0;
+    width: 100%;
+    -webkit-overflow-scrolling: touch; /* SUavidad extra en trackpads de Mac e iOS */
+    touch-action: pan-x;
+}
+
+/* Ocultamos la barra de scroll para que se vea limpio */
+.track-grid::-webkit-scrollbar {
+    display: none;
+}
+
+/* LA TARJETA (asegurar que las tarjetas tengan un tamaño fijo y no ocupen todo el ancho) */
+.track-card {
+    flex: 0 0 280px; /* Las tarjetas sempre medirán 280px */
+    scroll-snap-align: start; /* Ayuda al efecto de pegado lateral */
+    background: rgba(255,255,255,0.03); /* Un toque sutil de fondo */
+    padding: 15px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* LA PORTADA (Aquí limitamos el tamaño visual) */
+.cover-wrapper {
+    width: 100%;
+    aspect-ratio: 1/1;
+    overflow: hidden;
+    border-radius: 6px;
+    margin-bottom: 12px;
+}
+
+.cover-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* === CONTROLES DEL SLIDER (FLECHAS) === */
+/* 1. Contenedor Maestro: Aegura que la música vayya arriba y flechas abajo */
+.slider-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Esto centra el slider y las flechas */
+    width: 95%; /* No ocupa el 100%, deja un 5% de cada lado */
+    max-width: 1200px; /* Evita que en pantallas grandes se estire demasiado */
+    margin: 0 auto; /* Centra el contenedor en la pantalla */
+}
+
+/* 2. Contenedor de las Flechas: Centrado absoluto */
+.slider-controls {
+    display: flex !important;
+    justify-content: center !important;
+    gap: 20px;
+    margin: 20px 0 50px 0 !important; /* Margen arriba para separar, auto a los lados para centrar */
+    width: 100%;
+}
+
+/* 3. Estilo de las Flechas: Minimalista tipo Mac/Spotify */
+.slider-arrow {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.3);
+    color: white;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.3s;
+    opacity: 0.6; 
+}
+
+#singles-section {
+    margin-top: 50px;
+}
+
+/* 4. BOTONES DE ACCIÓN */
+.track-action {
+    display: flex;
+    gap: 8px;
+    margin-top: auto; /* Empuja los botones al fondo de la tarjeta */
+}
+
+/* Estilo de los botones */
+.btn-play, .btn-buy {
+    flex: 1;
+    padding: 8px; /* Ajuste de padding para pantallas chicas */
+    font-size: 0.65rem;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.btn-play { 
+    background-color: var(--white);
+    color: #000;
+}
+
+.btn-buy { 
+    background-color: transparent;
+    color: var(--text-main);
+    border: 1px solid #444;
+}
+
+/* == VIDEO (YOUTUBE RESPONSIVO) == */
+.video-wrapper {
+    max-width: 1000px; /* Un poco más ancho para que luzca  el 4k */
+    margin: 40px auto 100px auto;
+    padding: 8px; /* Espacio reducido para que el marco sea más fino */ 
+    background: #0a0a0a; /* Un gris casi oscuro para dar profundidad */
+    border: 1px solid rgba(255,255,255,0.1); /* Borde casi imperceptible */
+    border-radius: 14px; /* Redondeado sútil para suavizar las esquinas */
+    box-shadow: 0 20px 40px rgba(0,0,0,0.6); /* SOmbra pesada para que flote */
+    transition: transform 0.5s ease;
+}
+
+.video-container { 
+    position: relative;
+    padding-bottom: 56.25%; /* Ratio 16:9 */
+    height: 0;
+    overflow: hidden;
+    border-radius: 8px; /* Redondeamos también el video interno */
+}
+
+.video-container iframe { 
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    filter: brightness(0.9); /* Un toque de oscuridad que se quita al interactuar */
+    transition: 0.5s ease;
+}
+
+.video-container iframe:hover {
+    filter: brightness(1); /* Se ilumina al pasar el mouse */
+}
+
+/* == SECCIÓN TIENDA == */
+#shop {
+    padding: 100px 2rem;
+    background-color: #161618;
+    text-align: center;
+}
+
+.shop-container { 
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    flex-wrap: wrap;
+    margin-top: 30px;
+}
+
+.product-card {
+    background-color: var(--card-bg);
+    padding: 30px;
+    border: 1px solid #333;
+    border-radius: 12px;
+    width: 280px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 400px;
+    transition: all 0.3s ease;
+}
+
+.product-card:hover {
+    border-color: var(--white);
+}
+
+.product-card h3 {
+    font-size: 1.2rem;
+    letter-spacing: 1px;
+    margin-bottom: 5px;
+    color: var(--white);
+}
+
+.price {
+    display: block;
+    margin: 15px 0;
+    font-size: 1.3rem;
+    color: var(--white); /* Usamos el lila para destacar el precio */
+}
+
+/* Animación del botón de compra */
+.product-card .btn-buy {
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.4s ease;
+    background-color: var(--text-main);
+    color: var(--bg-color);
+    width: 100%;
+    margin-top: auto;
+}
+
+.product-card:hover .btn-buy {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* == SECCIÓN CONTACTO == */
+#contact { 
+    padding: 100px 2rem;
+    text-align: center;
+}
+
+.contact-container {
+    max-width: 600px; /* Limitamos el ancho para que sea fácil de leer */
+    margin: 40px auto 0; /* Centra el formulario */
+    text-align: left; /* El texto dentro del formulario a la izquierda */
+}
+
+/* Estilo para los campos de texto y el área de mensaje */
+.contact-container input, 
+.contact-container textarea {
+    width: 100%;
+    padding: 15px;
+    background-color: var(--card-bg); /* Fondo oscuro tenue */
+    border: 1px solid #333; /* Borde sutil */
+    border-radius: 6px;
+    color: white;
+    font-family: inherit; /* Usa la misma letra de la página */
+    margin-top: 10px;
+    margin-bottom: 20px;
+    box-sizing: border-box; /* Evita que el input se salga del cuadro */
+    transition: border-color 0.3s ease;
+}
+
+/* Cambia el borde cuando el usuario hace clic para escribir */
+.contact-container input:focus, 
+.contact-container textarea:focus {
+    outline: none;
+    border-color: var(--white); /* Un gris medio en lugar de lila */
+    background-color: rgba(255,255,255,0.05); /* Un brillo sutil al escribir */
+}
+
+.btn-send {
+    width: 100%;
+    padding: 16px;
+    background-color: var(--text-main); /* Color de acento */
+    color: var(--bg-color); /* Texto oscuro para que se lea perfecto */
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    text-transform: uppercase; /* Mayúsculas para darle fuerza */
+    letter-spacing: 2px; /* Espaciado para que combine con el resto */
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+/* Efecto al pasar el mpuse */
+.btn-send:hover { 
+    background-color: var(--white); /* Se ilumina a blanco puro al señalarlo */
+    transform: translateY(-3px); /* Un pequeño salto hacia arriba */
+    box-shadow: 0 10px 20px rgba(0,0,0,0.4); /* Sombra sutil para dar profundidad */
+}
+
+/* ESTILO PARA EL MENSAJE DE ÉXITO/ERROR (JS) */
+.form-status {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 0.9rem;
+    font-weight: 300;
+    letter-spacing: 1px;
+    animation: fadeIn 0.5s ease forwards;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px);}
+    to { opacity: 1; transform: translateY(0);}
+}
+
+/* 8. FOOTER Y REDES */
+footer {
+    padding: 60px 20px;
+    text-align: center;
+    border-top: 1px solid #222;
+    color: var(--text-dim);
+    font-size: 0.8rem;
+}
+
+.social-links { 
+    margin-top: 30px 0;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap; /* Para que en celular se acomoden bien */
+}
+
+.social-btn {
+    color: var(--text-dim);
+    text-decoration: none;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    padding: 10px 20px;
+    border: 1px solid #333;
+    border-radius: 30px; /* Estilo píldora */
+    transition: all 0.3s ease;
+}
+
+.social-btn:hover {
+    color: var(--white);
+    border-color: var(--white);
+    background-color: rgba(187, 134, 252, 0.1); /* Sutil toque lila */
+    transform: translateY(-3px);
+}
+
+/* UTILIDADES Y ANIMACIÓN JS */
+/* Esto debe estar así en tu style.css */
+.reveal.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Espaciado general para todas las secciones */
+section {
+    padding: 100px 20px; /* 100px arriba/abajo y 20px a los lados */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.5); /* Más sútil */
+    box-sizing: border-box;
+}
+
+/* Ajuste para que el menú no tape los títulos al hacer clic */
+section[id] {
+    scroll-margin-top: 80px; /* Evita que el menú tape el título */
+}
+
+/* Centrado de la Sección de Video */
+#video {
+    text-align: center; /* Centra el título H2 */
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Cenrtra el contenedor del video */
+}
+
+.video-wrapper {
+    width: 100%;
+    max-width: 850px; /* Evita que el video sea gigante */
+    margin: 0 auto; /* Lo centra horizontalmente */
+}
+
+/* PROJECT: Sebastian Vargas Official Website
+   AUTHOR: Sebastian Vargas
+   STACK: HTML5, CSS3, Vanilla JavaScript
+   FEATURES: Responsive Design, Custom Sliders, UX Optimized Hyphenation
+/*
